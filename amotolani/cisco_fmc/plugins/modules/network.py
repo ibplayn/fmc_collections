@@ -75,7 +75,7 @@ options:
 
 EXAMPLES = r'''
 - name: Retrieve a Network object
-  amotolani.cisco_fmc.getNetworkObject:
+  amotolani.cisco_fmc.network:
     name: Sample-Network
     state: lookup
     network_type: Network
@@ -85,7 +85,7 @@ EXAMPLES = r'''
     password: Cisco1234
 
 - name: Retrieve a FQDN object
-  amotolani.cisco_fmc.getNetworkObject:
+  amotolani.cisco_fmc.network:
     name: Sample-FQDN
     state: lookup
     network_type: FQDN
@@ -308,7 +308,7 @@ def main():
             elif _obj1['value'] != value or _obj1['name'] != name:
                 _create_obj = False
                 changed = True
-        elif requested_state == 'lookup'
+        elif requested_state == 'lookup':
             if 'items' in _obj1.keys():
                 _create_obj = False
                 changed = False
@@ -348,7 +348,7 @@ def main():
             result = dict(changed=changed)
         else:
             result = _obj1
-            
+
     module.exit_json(**result)
 
 
