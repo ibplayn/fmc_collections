@@ -353,7 +353,7 @@ def main():
             if changed is False and _create_obj is True:
                 result = dict(changed=changed)
             else:
-            result = _obj1
+                result = _obj1
 
     module.exit_json(**result)
 
