@@ -312,6 +312,9 @@ def main():
             if 'items' in _obj1.keys():
                 _create_obj = False
                 changed = False
+            elif _obj1['value'] != value or _obj1['name'] != name:
+                _create_obj = True
+                changed = False
         else:
             if 'items' in _obj1.keys():
                 changed = False
@@ -347,6 +350,9 @@ def main():
                 module.exit_json(**result)
             result = dict(changed=changed)
         else:
+            if changed is False and _create_obj is True:
+                result = dict(changed=changed)
+            else
             result = _obj1
 
     module.exit_json(**result)
