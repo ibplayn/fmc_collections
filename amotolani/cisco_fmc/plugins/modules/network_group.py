@@ -200,8 +200,8 @@ def main():
         :param config_name: Configuration name in result dictionary
         :return: boolean
         """
-        _obj_list, net_obj, ip_obj, range_obj, net_group_obj, fqdn_obj = ([] for i in range(5))
-        _literal_list, net_literal, ip_literal, range_literal, fqdn_literal= ([] for i in range(4))
+        _obj_list, net_obj, ip_obj, range_obj, net_group_obj, fqdn_obj = ([] for i in range(6))
+        _literal_list, net_literal, ip_literal, range_literal, fqdn_literal= ([] for i in range(5))
 
         # store all network group objects for use later
         network_group_objects = list()
