@@ -245,7 +245,7 @@ def main():
                         network_group_objects.append(i)
                     net_group_obj.append(a)
 
-                    config_obj = FQDNs(fmc=fmc1, name=i)
+                    config_obj = FQDNS(fmc=fmc1, name=i)
                     _config_obj = get_obj(config_obj)
                     if 'items' in _config_obj:
                         a = False
