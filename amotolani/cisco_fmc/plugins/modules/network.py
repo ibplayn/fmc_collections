@@ -9,19 +9,20 @@ import requests
 DOCUMENTATION = r'''
 ---
 author: Adelowo David (@amotolani)
+modified_by: Brandon Chap (@ibplayn)
 module: amotolani.cisco_fmc.network
-short_description: Create, Modify and Delete Cisco FMC network objects
+short_description: Retrieve, Create, Modify and Delete Cisco FMC network objects
 description:
-  - Create, Modify and Delete Cisco FMC network objects.
+  - Retrieve, Create, Modify and Delete Cisco FMC network objects.
 options:
   name:
     description:
-      - The name of the cisco_fmc object to be created, modified or deleted.
+      - The name of the cisco_fmc object to be retrieved, created, modified or deleted.
     type: str
     required: true
   state:
     description:
-      - Whether to create/modify (C(present)), or remove (C(absent)) an object.
+      - Whether to retreive (C(lookup)), create/modify (C(present)), or remove (C(absent)) an object.
     type: str
     required: true
   description:
@@ -33,10 +34,10 @@ options:
     description:
       - The network object type.
       - Allowed choices are Host, Network, Range, and FQDN
-      - Use 'Host' to create, modify or delete an IP Host object
-      - Use 'Range' to create, modify or delete an IP Address Range object
-      - Use 'Network' to create, modify or delete a Network Address cisco_fmc object
-      - Use 'FQDN' to create, modify or delete an FQDN Host object
+      - Use 'Host' to retrieve, create, modify or delete an IP Host object
+      - Use 'Range' to retrieve, create, modify or delete an IP Address Range object
+      - Use 'Network' to retrieve, create, modify or delete a Network Address cisco_fmc object
+      - Use 'FQDN' to retrieve, create, modify or delete an FQDN Host object
     type: str
     required: true
   fmc:
@@ -73,6 +74,26 @@ options:
 '''
 
 EXAMPLES = r'''
+- name: Retrieve a Network object
+  amotolani.cisco_fmc.network:
+    name: Sample-Network
+    state: lookup
+    network_type: Network
+    fmc: .sample.com
+    value: 11.22.32.0/24
+    username: admin
+    password: Cisco1234
+
+- name: Retrieve a FQDN object
+  amotolani.cisco_fmc.network:
+    name: Sample-FQDN
+    state: lookup
+    network_type: FQDN
+    fmc: .sample.com
+    value: sub.example.com
+    username: admin
+    password: Cisco1234
+
 - name: Create a Network object
   amotolani.cisco_fmc.network:
     name: Sample-Network
@@ -140,7 +161,7 @@ EXAMPLES = r'''
 def main():
     module = AnsibleModule(
         argument_spec=dict(
-            state=dict(type='str', choices=['present', 'absent'], required=True),
+            state=dict(type='str', choices=['present', 'absent', 'lookup'], required=True),
             name=dict(type='str', required=True),
             description=dict(type='str', required=False),
             network_type=dict(type='str', choices=['Host', 'Range', 'Network', 'FQDN'], required=True),
@@ -287,6 +308,16 @@ def main():
             elif _obj1['value'] != value or _obj1['name'] != name:
                 _create_obj = False
                 changed = True
+        elif requested_state == 'lookup':
+            if 'items' in _obj1.keys():
+                _create_obj = False
+                changed = False
+            elif _obj1['value'] != value or _obj1['name'] != name:
+                _create_obj = True
+                changed = False
+            else:
+                _create_obj = False
+                changed = False
         else:
             if 'items' in _obj1.keys():
                 changed = False
@@ -320,8 +351,13 @@ def main():
                     msg = "An error occurred while sending request to cisco fmc"
                 result = dict(failed=True, msg=msg)
                 module.exit_json(**result)
+            result = dict(changed=changed)
+        else:
+            if _create_obj is True:
+                result = dict(changed=changed)
+            else:
+                result = _obj1
 
-    result = dict(changed=changed)
     module.exit_json(**result)
 
 
